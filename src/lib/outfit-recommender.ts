@@ -16,15 +16,40 @@ function getTempLevel(minTemp: number, maxTemp: number): TempLevel {
   return "very_hot";
 }
 
+// Unsplash 무료 이미지 (images.unsplash.com) — 기온별 의류 큐레이션
+// 형식: https://images.unsplash.com/photo-{id}?w=400&h=500&fit=crop&auto=format
+const U = (id: string) =>
+  `https://images.unsplash.com/photo-${id}?w=400&h=500&fit=crop&auto=format`;
+
+const IMAGES = {
+  // 상의
+  knit_thick:    U("1434389188343-a5bdbfe4c1e0"), // 두꺼운 니트
+  knit_thin:     U("1576871337622-98d48d1cf531"), // 얇은 니트
+  fleece:        U("1520975916090-ced4e1e0e4d0"), // 플리스/맨투맨
+  longsleeve:    U("1503341733017-1901578f9f1e"), // 긴팔 티셔츠
+  shirt:         U("1598554747436-c9293d6a588f"), // 셔츠
+  tshirt:        U("1521572163474-6864f9cf17ab"), // 반팔 티셔츠
+  sleeveless:    U("1583454110551-21f2fa2afe61"), // 민소매
+  linen_shirt:   U("1622519407650-3df9d1c3f7f4"), // 린넨 셔츠
+  // 아우터
+  long_padding:  U("1548883354-94bc99abbd57"), // 롱패딩
+  padding:       U("1611312449408-fcedd27265a7"), // 패딩 점퍼
+  wool_coat:     U("1512327536842-5aa37d1b3dcf"), // 울 코트
+  jacket:        U("1591047139829-d91aecb6caea"), // 자켓/야상
+  cardigan:      U("1434389188343-a5bdbfe4c1e0"), // 카디건 (니트 계열)
+  thin_cardigan: U("1551489186-cf8726f514f8"), // 얇은 가디건
+  windbreaker:   U("1539109136881-3be0616acf4b"), // 바람막이
+};
+
 const OUTFIT_MAP: Record<TempLevel, Omit<OutfitRecommendation, "rainGear">> = {
   very_cold: {
     level: "very_cold",
     label: "영하의 혹한",
-    description: `최저 기온이 영하권입니다. 체온 유지가 최우선입니다.`,
+    description: "최저 기온이 영하권입니다. 체온 유지가 최우선입니다.",
     items: [
-      { category: "상의", suggestions: ["두꺼운 니트", "기모 맨투맨", "패딩 조끼"] },
+      { category: "상의", suggestions: ["두꺼운 니트", "기모 맨투맨", "패딩 조끼"], imageUrl: IMAGES.knit_thick },
       { category: "하의", suggestions: ["기모 바지", "두꺼운 청바지", "방한 레깅스"] },
-      { category: "아우터", suggestions: ["롱패딩", "두꺼운 울코트", "헤비 다운 점퍼"] },
+      { category: "아우터", suggestions: ["롱패딩", "두꺼운 울코트", "헤비 다운 점퍼"], imageUrl: IMAGES.long_padding },
       { category: "신발", suggestions: ["방한 부츠", "어그 부츠", "두꺼운 양말 필수"] },
       { category: "액세서리", suggestions: ["목도리", "두꺼운 장갑", "귀마개 모자", "핫팩"] },
     ],
@@ -36,11 +61,11 @@ const OUTFIT_MAP: Record<TempLevel, Omit<OutfitRecommendation, "rainGear">> = {
   cold: {
     level: "cold",
     label: "매서운 추위",
-    description: `기온이 매우 낮습니다. 두꺼운 방한복이 필요합니다.`,
+    description: "기온이 매우 낮습니다. 두꺼운 방한복이 필요합니다.",
     items: [
-      { category: "상의", suggestions: ["두꺼운 니트", "기모 후드티", "플리스"] },
+      { category: "상의", suggestions: ["두꺼운 니트", "기모 후드티", "플리스"], imageUrl: IMAGES.fleece },
       { category: "하의", suggestions: ["기모 청바지", "두꺼운 면바지"] },
-      { category: "아우터", suggestions: ["패딩 점퍼", "울코트", "롱패딩"] },
+      { category: "아우터", suggestions: ["패딩 점퍼", "울코트", "롱패딩"], imageUrl: IMAGES.padding },
       { category: "신발", suggestions: ["부츠", "두꺼운 운동화"] },
       { category: "액세서리", suggestions: ["목도리", "장갑", "비니"] },
     ],
@@ -52,11 +77,11 @@ const OUTFIT_MAP: Record<TempLevel, Omit<OutfitRecommendation, "rainGear">> = {
   chilly: {
     level: "chilly",
     label: "쌀쌀한 날씨",
-    description: `제법 쌀쌀합니다. 두꺼운 겉옷이 필요한 날씨입니다.`,
+    description: "제법 쌀쌀합니다. 두꺼운 겉옷이 필요한 날씨입니다.",
     items: [
-      { category: "상의", suggestions: ["니트", "두꺼운 맨투맨", "긴팔 셔츠"] },
+      { category: "상의", suggestions: ["니트", "두꺼운 맨투맨", "긴팔 셔츠"], imageUrl: IMAGES.knit_thin },
       { category: "하의", suggestions: ["청바지", "면 슬랙스"] },
-      { category: "아우터", suggestions: ["자켓", "점퍼", "야상", "짧은 패딩"] },
+      { category: "아우터", suggestions: ["자켓", "점퍼", "야상", "짧은 패딩"], imageUrl: IMAGES.jacket },
       { category: "신발", suggestions: ["운동화", "앵클부츠", "로퍼"] },
       { category: "액세서리", suggestions: ["얇은 목도리", "카디건 레이어링"] },
     ],
@@ -68,11 +93,11 @@ const OUTFIT_MAP: Record<TempLevel, Omit<OutfitRecommendation, "rainGear">> = {
   cool: {
     level: "cool",
     label: "서늘한 날씨",
-    description: `약간 서늘한 날씨입니다. 가을/봄 느낌의 레이어링이 좋습니다.`,
+    description: "약간 서늘한 날씨입니다. 가을/봄 느낌의 레이어링이 좋습니다.",
     items: [
-      { category: "상의", suggestions: ["얇은 니트", "맨투맨", "긴팔 티셔츠"] },
+      { category: "상의", suggestions: ["얇은 니트", "맨투맨", "긴팔 티셔츠"], imageUrl: IMAGES.longsleeve },
       { category: "하의", suggestions: ["청바지", "면바지", "슬랙스"] },
-      { category: "아우터", suggestions: ["카디건", "가디건", "얇은 자켓"] },
+      { category: "아우터", suggestions: ["카디건", "가디건", "얇은 자켓"], imageUrl: IMAGES.cardigan },
       { category: "신발", suggestions: ["운동화", "로퍼", "스니커즈"] },
       { category: "액세서리", suggestions: ["얇은 스카프 (저녁용)"] },
     ],
@@ -83,11 +108,11 @@ const OUTFIT_MAP: Record<TempLevel, Omit<OutfitRecommendation, "rainGear">> = {
   mild: {
     level: "mild",
     label: "선선한 날씨",
-    description: `선선하고 쾌적한 날씨입니다. 가벼운 겉옷 하나면 충분합니다.`,
+    description: "선선하고 쾌적한 날씨입니다. 가벼운 겉옷 하나면 충분합니다.",
     items: [
-      { category: "상의", suggestions: ["긴팔 티셔츠", "얇은 스웨터", "셔츠"] },
+      { category: "상의", suggestions: ["긴팔 티셔츠", "얇은 스웨터", "셔츠"], imageUrl: IMAGES.shirt },
       { category: "하의", suggestions: ["청바지", "면바지", "치노"] },
-      { category: "아우터", suggestions: ["얇은 가디건", "셔츠 자켓", "바람막이"] },
+      { category: "아우터", suggestions: ["얇은 가디건", "셔츠 자켓", "바람막이"], imageUrl: IMAGES.windbreaker },
       { category: "신발", suggestions: ["스니커즈", "로퍼", "슬립온"] },
       { category: "액세서리", suggestions: [] },
     ],
@@ -98,11 +123,11 @@ const OUTFIT_MAP: Record<TempLevel, Omit<OutfitRecommendation, "rainGear">> = {
   warm: {
     level: "warm",
     label: "따뜻한 날씨",
-    description: `따뜻한 날씨입니다. 반팔과 얇은 겉옷을 준비하세요.`,
+    description: "따뜻한 날씨입니다. 반팔과 얇은 겉옷을 준비하세요.",
     items: [
-      { category: "상의", suggestions: ["반팔 티셔츠", "얇은 긴팔", "블라우스"] },
+      { category: "상의", suggestions: ["반팔 티셔츠", "얇은 긴팔", "블라우스"], imageUrl: IMAGES.tshirt },
       { category: "하의", suggestions: ["청바지", "면바지", "치마"] },
-      { category: "아우터", suggestions: ["얇은 가디건 (아침/저녁용)"] },
+      { category: "아우터", suggestions: ["얇은 가디건 (아침/저녁용)"], imageUrl: IMAGES.thin_cardigan },
       { category: "신발", suggestions: ["스니커즈", "샌들", "로퍼"] },
       { category: "액세서리", suggestions: [] },
     ],
@@ -114,11 +139,11 @@ const OUTFIT_MAP: Record<TempLevel, Omit<OutfitRecommendation, "rainGear">> = {
   hot: {
     level: "hot",
     label: "더운 날씨",
-    description: `꽤 더운 날씨입니다. 시원하고 통기성 좋은 옷을 입으세요.`,
+    description: "꽤 더운 날씨입니다. 시원하고 통기성 좋은 옷을 입으세요.",
     items: [
-      { category: "상의", suggestions: ["반팔 티셔츠", "민소매", "린넨 셔츠"] },
+      { category: "상의", suggestions: ["반팔 티셔츠", "민소매", "린넨 셔츠"], imageUrl: IMAGES.linen_shirt },
       { category: "하의", suggestions: ["반바지", "린넨 바지", "짧은 치마"] },
-      { category: "아우터", suggestions: ["냉방 대비 얇은 가디건"] },
+      { category: "아우터", suggestions: ["냉방 대비 얇은 가디건"], imageUrl: IMAGES.thin_cardigan },
       { category: "신발", suggestions: ["샌들", "슬리퍼", "경량 스니커즈"] },
       { category: "액세서리", suggestions: ["선글라스", "모자"] },
     ],
@@ -131,11 +156,11 @@ const OUTFIT_MAP: Record<TempLevel, Omit<OutfitRecommendation, "rainGear">> = {
   very_hot: {
     level: "very_hot",
     label: "폭염",
-    description: `매우 더운 날씨입니다. 더위를 이기는 시원한 옷차림이 필수입니다.`,
+    description: "매우 더운 날씨입니다. 더위를 이기는 시원한 옷차림이 필수입니다.",
     items: [
-      { category: "상의", suggestions: ["민소매", "얇은 반팔", "기능성 쿨 티셔츠"] },
+      { category: "상의", suggestions: ["민소매", "얇은 반팔", "기능성 쿨 티셔츠"], imageUrl: IMAGES.sleeveless },
       { category: "하의", suggestions: ["짧은 반바지", "린넨 숏 팬츠", "미니스커트"] },
-      { category: "아우터", suggestions: ["냉방 필수 실내용 가디건"] },
+      { category: "아우터", suggestions: ["냉방 필수 실내용 가디건"], imageUrl: IMAGES.thin_cardigan },
       { category: "신발", suggestions: ["샌들", "슬리퍼", "아쿠아 슈즈"] },
       { category: "액세서리", suggestions: ["자외선 차단 선글라스", "챙 넓은 모자", "미스트 스프레이"] },
     ],

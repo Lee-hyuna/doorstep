@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getMockWeatherData } from "@/lib/weather-mock";
 import { getOutfitRecommendation } from "@/lib/outfit-recommender";
+import { generateAlerts } from "@/lib/weather-alerts";
+import { getPromotions } from "@/lib/promotions";
 import { BFFWeatherResponse } from "@/types/weather";
 
 export const runtime = "edge";
@@ -24,20 +26,24 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  // BFF: 데이터 조회 + 가공 + 추천 로직을 서버에서 처리
-  // 실제 기상청 API 연동 시 getMockWeatherData → fetchKMAWeather 로 교체
+  // BFF: 모든 가공 로직을 서버에서 처리, 클라이언트는 결과만 소비
   const weather = getMockWeatherData(lat, lng);
-  const outfit = getOutfitRecommendation(weather);
+  const [outfit, alerts, promotions] = [
+    getOutfitRecommendation(weather),
+    generateAlerts(weather),
+    getPromotions(weather, 2),
+  ];
 
   const response: BFFWeatherResponse = {
     weather,
     outfit,
+    alerts,
+    promotions,
     fetchedAt: new Date().toISOString(),
   };
 
   return NextResponse.json(response, {
     headers: {
-      // 5분 캐시: 날씨 데이터는 자주 바뀌지 않음
       "Cache-Control": "public, s-maxage=300, stale-while-revalidate=60",
     },
   });

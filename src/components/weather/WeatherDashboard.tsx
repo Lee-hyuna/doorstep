@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { BFFWeatherResponse } from "@/types/weather";
 import { WeatherCard } from "./WeatherCard";
 import { OutfitCard } from "./OutfitCard";
+import { AlertBanner } from "./AlertBanner";
+import { PromotionSection } from "./PromotionSection";
 
 type Status = "idle" | "locating" | "loading" | "success" | "error";
 
@@ -64,14 +66,14 @@ export function WeatherDashboard() {
         {/* 헤더 */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-1">
-            오늘 뭐 입지? 👚
+            내일 뭐 입지? 👕
           </h1>
           <p className="text-gray-500 text-sm">
-            날씨에 맞는 옷차림을 추천해드려요
+            내일 날씨 미리 보고, 옷 준비해요
           </p>
         </div>
 
-        {/* 상태별 렌더링 */}
+        {/* 로딩 상태 */}
         {(status === "idle" || status === "locating") && (
           <StatusView
             icon="📍"
@@ -108,10 +110,20 @@ export function WeatherDashboard() {
 
         {status === "success" && data && (
           <div className="space-y-4">
+            {/* 날씨 카드 */}
             <WeatherCard weather={data.weather} />
+
+            {/* 오늘의 날씨 알림 */}
+            <AlertBanner alerts={data.alerts} />
+
+            {/* 옷차림 추천 */}
             <OutfitCard outfit={data.outfit} />
 
-            <div className="text-center">
+            {/* 수익성 제휴 프로모션 (날씨 조건 매칭, 최대 2개) */}
+            <PromotionSection promotions={data.promotions} />
+
+            {/* 새로고침 */}
+            <div className="text-center pb-4">
               <button
                 onClick={fetchWeather}
                 className="text-gray-400 hover:text-gray-600 text-xs transition-colors"

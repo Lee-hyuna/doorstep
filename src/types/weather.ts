@@ -1,3 +1,10 @@
+export interface HourlyForecast {
+  hour: number;
+  temp: number;
+  sky: SkyCondition;
+  precipitation: PrecipitationType;
+}
+
 export interface WeatherData {
   locationName: string;
   date: string;
@@ -8,6 +15,9 @@ export interface WeatherData {
   precipitation: PrecipitationType;
   humidity: number;
   windSpeed: number;
+  uvIndex: number;
+  dustLevel: "좋음" | "보통" | "나쁨" | "매우나쁨";
+  hourlyForecasts: HourlyForecast[];
 }
 
 export type SkyCondition = "맑음" | "구름많음" | "흐림";
@@ -35,11 +45,42 @@ export type TempLevel =
 export interface OutfitItem {
   category: "상의" | "하의" | "아우터" | "신발" | "액세서리";
   suggestions: string[];
+  imageUrl?: string;
+}
+
+export interface WeatherAlert {
+  type: "rain" | "snow" | "temp_drop" | "temp_rise" | "uv" | "dust";
+  message: string;
+  time?: string;
+  severity: "info" | "warning" | "danger";
+}
+
+export type PromotionTrigger =
+  | "rain"
+  | "snow"
+  | "temp_drop_sharp"
+  | "uv_high"
+  | "dust_bad"
+  | "hot"
+  | "cold";
+
+export interface PromotionCard {
+  id: string;
+  trigger: PromotionTrigger;
+  badge: string;
+  title: string;
+  description: string;
+  ctaLabel: string;
+  ctaUrl: string;
+  imageEmoji: string;
+  priority: number;
 }
 
 export interface BFFWeatherResponse {
   weather: WeatherData;
   outfit: OutfitRecommendation;
+  alerts: WeatherAlert[];
+  promotions: PromotionCard[];
   fetchedAt: string;
 }
 
